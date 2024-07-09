@@ -7,6 +7,7 @@
 package gconv_test
 
 import (
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"testing"
 	"time"
 
@@ -52,5 +53,17 @@ func TestGtime(t *testing.T) {
 		t.AssertEQ(gconv.GTime(timeTimeTests).Second(), 0)
 		t.AssertEQ(gconv.GTime(timeTimeTests).Nanosecond(), 123456789)
 		t.AssertEQ(gconv.GTime(timeTimeTests).String(), "2024-04-22 12:00:00")
+	})
+}
+
+func TestPBtime(t *testing.T) {
+	gtest.C(t, func(t *gtest.T) {
+		t.AssertEQ(gconv.PBTime(""), &timestamppb.Timestamp{})
+		t.AssertEQ(gconv.PBTime(nil), nil)
+
+		t.AssertEQ(gconv.PBTime(gtime.New(timeStrTests)), timestamppb.New(timeTimeTests))
+		t.AssertEQ(gconv.PBTime(*gtime.New(timeStrTests)), timestamppb.New(timeTimeTests))
+		t.AssertEQ(gconv.PBTime(timeTimeTests), timestamppb.New(timeTimeTests))
+		t.AssertEQ(gconv.PBTime(&timeTimeTests), timestamppb.New(timeTimeTests))
 	})
 }

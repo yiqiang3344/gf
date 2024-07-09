@@ -7,6 +7,8 @@
 package gconv
 
 import (
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"reflect"
 	"time"
 
 	"github.com/gogf/gf/v2/internal/utils"
@@ -86,5 +88,31 @@ func GTime(any interface{}, format ...string) *gtime.Time {
 	} else {
 		t, _ := gtime.StrToTime(s)
 		return t
+	}
+}
+
+// PBTime converts `any` to *timestamppb.Timestamp.
+func PBTime(any interface{}) *timestamppb.Timestamp {
+	if any == nil {
+		return nil
+	}
+	if v, ok := any.(*timestamppb.Timestamp); ok {
+		return v
+	}
+	if v, ok := any.(timestamppb.Timestamp); ok {
+		return &v
+	}
+	ty := reflect.ValueOf(any).Type().String()
+	switch ty {
+	case "Time", "time.Time":
+		return timestamppb.New(any.(time.Time))
+	case "*time.Time":
+		return timestamppb.New(*any.(*time.Time))
+	case "GTime", "gtime.Time":
+		return timestamppb.New(any.(gtime.Time).Time)
+	case "*gtime.Time":
+		return timestamppb.New(any.(*gtime.Time).Time)
+	default:
+		return &timestamppb.Timestamp{}
 	}
 }

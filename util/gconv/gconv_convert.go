@@ -254,6 +254,12 @@ func doConvert(in doConvertInput) (convertedValue interface{}) {
 			return gtime.New()
 		}
 
+	case "timestamppb.Timestamp":
+		v := PBTime(in.FromValue)
+		return *v
+	case "*timestamppb.Timestamp":
+		return PBTime(in.FromValue)
+
 	case "Duration", "time.Duration":
 		return Duration(in.FromValue)
 	case "*time.Duration":
