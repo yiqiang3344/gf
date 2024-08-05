@@ -9,9 +9,7 @@ package glog
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -162,10 +160,7 @@ func (l *Logger) rotateChecksTimely(ctx context.Context) {
 			if !gregex.IsMatchString(fileNameRegexPattern, file) {
 				continue
 			}
-			//mtime = gfile.MTime(file)
-			// 获取文件创建时间，替换原来的修改时间
-			finfo, _ := os.Stat(file)
-			mtime = time.Unix(finfo.Sys().(*syscall.Stat_t).Birthtimespec.Unix())
+			mtime = gfile.MTime(file)
 			subDuration = now.Sub(mtime)
 			if subDuration > l.config.RotateExpire {
 				func() {
